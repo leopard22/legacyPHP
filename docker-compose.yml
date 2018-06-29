@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: resources
+      dockerfile: Dockerfile
+    ports:
+     - "8080:80"
+    volumes:
+      - ./code:/root:cached
+    environment:
+      - DB_HOST=mariadb
+      - DB_USER=root
+      - DB_PASS=root
+      - DB_NAME=ouvrages
+  mariadb:
+    image: mariadb:10.3
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=ouvrages
+    volumes:
+      - ./resources:/docker-entrypoint-initdb.d:ro
+  mailhog:
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+  redis:
+    image: redis:4
+    restart: 'unless-stopped'
